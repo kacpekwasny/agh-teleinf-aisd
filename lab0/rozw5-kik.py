@@ -29,10 +29,10 @@ def check_winner(p):
 class Kik:
     def __init__(self) -> None:
         self.board = [" " for _ in range(9)]
-        self.circle_move = False
-        self.against_computer = True
-        self.computer_char = "O"
-        self.computer_move = False
+        self.circle_move = False # Chose if Cross or circle is first
+        self.against_computer = True # False -> You will play user vs user, True -> You play vs computer
+        self.computer_char = "O" # Chose which charachter will computer use, you will use the opposite one
+        self.computer_move = False # False -> The user has first move
 
     """return None if no one won yet, or 'X' or 'O'"""
     def check_winner(self):
@@ -119,7 +119,6 @@ class Kik:
                 best_index = i
                 best_value = v
         return best_index
-
 
     def minmax(self, board, computer_move, comp_char, user_char):
         w = check_winner(board)
