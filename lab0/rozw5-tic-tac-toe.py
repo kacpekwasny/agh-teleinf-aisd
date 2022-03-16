@@ -3,36 +3,48 @@ from tabnanny import check
 from turtle import circle
 
 
+"""
+Move terminal cursor around.
+This function is mostly used to overwrite the displayed board
+"""
 def fmove(y, x):
     print("\033[%d;%dH" % (y, x))
 
+
+"""
+Take in List of len = 9 that represents a tic tac toe board and check if someone won,
+items in the list may be "X", "O" or " "
+If X won return "X"
+If O won return "O"
+If no one won return None - this might be beacuse the game was Draw or beacuse it has not ended yet
+"""
 def check_winner(p):
     for i in range(3):
-        # poziomo
+        # check horizontal
         if p[i*3]!=" " and p[i*3] == p[i*3+1] == p[i*3+2]:
             return p[i*3]
 
-        # pionowo
+        # check vertical
         if p[i]!=" " and p[i] == p[3+i] == p[6+i]:
             return p[i]
 
 
-    # ukośnie opadająco
+    # obliquely falling
     if p[0]!=" " and p[0]==p[4]==p[8]: return p[8]
 
-    # ukośnie rosnąco
+    # obliquely raising
     if p[6]!=" " and p[6]==p[4]==p[2]: return p[2]
     
     return None
 
 
-class Kik:
-    def __init__(self) -> None:
+class TicTacToe:
+    def __init__(self, circle_move_first: bool, against_computer: bool, computer_char_X: bool, computer_move_first: bool) -> None:
         self.board = [" " for _ in range(9)]
-        self.circle_move = False # Chose if Cross or circle is first
-        self.against_computer = True # False -> You will play user vs user, True -> You play vs computer
-        self.computer_char = "O" # Chose which charachter will computer use, you will use the opposite one
-        self.computer_move = False # False -> The user has first move
+        self.circle_move = circle_move_first                    # Chose if Cross or circle is first
+        self.against_computer = against_computer                # False -> You will play user vs user, True -> You play vs computer
+        self.computer_char = "X" if computer_char_X else "O"    # Chose which charachter will computer use, you will use the opposite one
+        self.computer_move = computer_move_first                # False -> The user has first move
 
     """return None if no one won yet, or 'X' or 'O'"""
     def check_winner(self):
@@ -150,8 +162,8 @@ class Kik:
 
         
 if __name__ == "__main__":
-    kik = Kik()
-    kik.run()
+    ttt = TicTacToe()
+    ttt.run()
 
 
 
