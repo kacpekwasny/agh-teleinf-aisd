@@ -66,7 +66,7 @@ def z3():
 
     def z2():
         i = 0
-        while i<12:
+        for i in range(0, 10, 2):
             #print(i, end=" ")
             i+=1
         #print("\n")
