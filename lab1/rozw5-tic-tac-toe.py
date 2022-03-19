@@ -133,7 +133,7 @@ class TicTacToe:
             if  mv.lower() in ["reset", "r"]:
                 fmove(0,0)
                 clear_terminal()
-                self.__init__(self.circle_move, self.against_computer, self.computer_char_X, self.computer_move_first)
+                self.__init__(self.circle_move, self.against_computer, self.computer_char_X, self.computer_move_first, self.visualize_minmax)
                 self.run()
                 exit()
 
@@ -294,11 +294,3 @@ run with no args for a game against computer
 
     ttt = TicTacToe(circle_move_first, against_comp, computer_has_X, computer_has_first_turn, visualize_minmax)
     ttt.run()
-
-
-
-
-
-
-
-
