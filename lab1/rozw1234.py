@@ -1,15 +1,7 @@
-from msilib.schema import Error
-from time import time
-from tokenize import Name
+import sys, os
+sys.path.append(os.path.abspath(r".."))
 
-def timeit(reps, *funcs):
-    for f in funcs:        
-        s = time()
-        for _ in range(reps):
-            f()
-        print("\n", f)
-        print((time()-s)/reps)
-        print("\n")
+from aidslib.time_measurements import timeit
 
 def z1():
     l = [1, 2]
