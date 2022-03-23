@@ -1,22 +1,11 @@
-from time import time
-
-def timeit(reps, *funcs):
-    times = []
-    for f in funcs:        
-        s = time()
-        for _ in range(reps):
-            f()
-        print("\n", f.__name__)
-        times.append( (time()-s) / reps )
-        print(times[-1])
-        print("\n")
-    for i in range(len(times)-1):
-        x = times[i]/times[i+1]
-        print(x, 1/x)
-
+import sys, os
+sys.path.append(os.path.abspath(r".."))
 
 """yield all numbers that are divisable by `divisable` and not divisable by `not_divisable` from between the range <low, high)
 FASTER than alt"""
+from aidslib.time_measurements import timeit_compare
+
+
 def zad1(low, high, divisable, not_divisable):
     # for simplicty number is divisable - means that it is divisable by `divisable` variable. Similarly not divisable.
     divisable, not_divisable = abs(divisable), abs(not_divisable)
@@ -63,7 +52,7 @@ def turn2str_alt(gen, *args): # faster
 
 if __name__ == "__main__":
     args = 500, 3000, 7, 5
-    timeit(1000, test_gen(zad1, *args), test_gen(zad1_alt, *args))
-    timeit(1000, lambda: turn2str(zad1, *args), lambda: turn2str_alt(zad1, *args))
+    timeit_compare(1000, test_gen(zad1, *args), test_gen(zad1_alt, *args))
+    timeit_compare(1000, lambda: turn2str(zad1, *args), lambda: turn2str_alt(zad1, *args))
     # [print(i, i%5, i%7) for i in zad1(500, 601, 5, 7)]
 
