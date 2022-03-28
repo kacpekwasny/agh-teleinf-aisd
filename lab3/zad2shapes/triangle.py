@@ -7,8 +7,8 @@ class Triangle:
 
     def __post_init__(self):
         if (len(self.points) != 3 or # if different number of points than 3
-            any([len(t) != 2 for t in self.points])): # if point has different number of values than 2
-            raise ValueError("points has to be a tuple ((x1, y1), (x2, y2), (x3, y3))")
+            any([type(t) != tuple or len(t) != 2 for t in self.points])): # if point has different number of values than 2
+            raise ValueError("points has to be a 3x2 tuple like: ((x1, y1), (x2, y2), (x3, y3))")
 
     @property
     def area(self):
