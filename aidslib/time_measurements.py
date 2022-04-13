@@ -1,25 +1,25 @@
-from time import time
+from time import perf_counter
 from typing import Tuple, TypeVar
 Any = TypeVar("Any")
 
 def timeit(reps, *funcs):
     for f in funcs:        
-        s = time()
+        s = perf_counter()
         for _ in range(reps):
             f()
         print("\n", f.__name__)
-        print((time()-s)/reps)
+        print((perf_counter()-s)/reps)
         print("\n")
 
 def timeit_compare(reps, *funcs):
     if len(funcs) != 2: raise ValueError("you can only compare two functions at a time")
     times = []
     for f in funcs:        
-        s = time()
+        s = perf_counter()
         for _ in range(reps):
             f()
         print("\n", f.__name__)
-        times.append( (time()-s) / reps )
+        times.append( (perf_counter()-s) / reps )
         print(times[-1])
         print("\n")
     for i in range(len(times)-1):
@@ -27,17 +27,24 @@ def timeit_compare(reps, *funcs):
         print(x, 1/x)
 
 def timeit_dict(reps, **funcs) -> dict:
+    """
+        returns:
+            kwarg -> elapsed_time
+    """
     exec_times = {}
     for name, func in funcs.items():
-        s = time()
-        for _ in range(reps):
+        print(f"Starting {name}: ")
+        s = perf_counter()
+        for rep in range(reps):
             func()
-        exec_times[name] = time() - s
-        print(f"\n {name} exec time: {exec_times[name]} \n")
+            print(f"{rep=} : {perf_counter() - s = }")
+            #print(". ", end="", flush=True)
+        exec_times[name] = perf_counter() - s
+        print(f"\n {name} - execution of {reps=} took time: {exec_times[name]} \n")
     return exec_times
 
 def time_exec_ret(func, *args, **kwargs) -> Tuple[Any, float]:
-    start = time()
+    start = perf_counter()
     ret = func(*args, **kwargs)
-    return ret, time() - start
+    return ret, perf_counter() - start
 
