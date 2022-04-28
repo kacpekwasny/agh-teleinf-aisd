@@ -48,3 +48,11 @@ def time_exec_ret(func, *args, **kwargs) -> Tuple[Any, float]:
     ret = func(*args, **kwargs)
     return ret, perf_counter() - start
 
+def exec_time(reps, func) -> float:
+    "returns avg_time, full_time"
+    start = perf_counter()
+    for _ in range(reps):
+        func()
+    elapsed = perf_counter() - start
+    return elapsed/reps, elapsed
+

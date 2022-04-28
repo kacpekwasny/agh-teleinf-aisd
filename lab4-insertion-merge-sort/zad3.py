@@ -1,5 +1,4 @@
 import sys, os
-from unicodedata import name
 sys.path.append(os.path.abspath(r".."))
 
 from random import randint
