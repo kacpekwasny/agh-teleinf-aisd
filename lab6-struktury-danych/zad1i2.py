@@ -164,5 +164,9 @@ if __name__ == "__main__":
     # t.recursive_print()
     # f.print_debug()
     f.print()
-    print(f.minimum(7.5))
-    print(f.maximum(7.5))
+    print(f"{f.minimum(7.5)=}")
+    print(f"{f.maximum(7.5)=}")
+    
+    print(f"{f.search(7.9)=}")
+    print(f"{f.search(4.99)=}")
+    print(f"{f.search(4.98)=}")
