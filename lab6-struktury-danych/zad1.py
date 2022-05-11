@@ -1,11 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from list
-
-@dataclass
-class NumForest:
-    pass
 
 
 @dataclass
@@ -35,7 +30,9 @@ class Tree:
 
 
     def recursive_print(self, level=0, indentation=0) -> None:
-        sval = str("%.2f" % self.value)
+        sval = str("%.2f" % self.value).strip("0")
+        if sval[-1] == ".":
+            sval += "0"
         sval = "-" * level + sval
         indentation += len(sval)
 
@@ -48,43 +45,73 @@ class Tree:
 
         # print more tree
         if self.more:
-            print("\n" + " " * indentation, end="")
+            print(" " * (indentation * 1 if self.less else 0), end="")
             self.more.recursive_print(level, indentation)
-
+        
+        if not (self.less or self.more):
+            print("")
 
 @dataclass
 class Forest:
     trees: list[Tree] = field(init=False, default_factory=list)
 
+    @staticmethod
+    def root_val(val) -> float:
+        return val//1 + 0.5
 
     def ins(self, value: float) -> Forest:
         if len(self.trees) == 0:
-            self.trees.append(Tree(value))
-            return
+            self.trees.append(Tree(self.root_val(value)).ins(value))
+            return self
 
         # does it go in the begging?
+        if value < self.trees[0].value - 0.5:
+            self.trees = [Tree(self.root_val(value)).ins(value)] + self.trees
+            return self
 
+        if self.trees[0].value - 0.5 <= value < self.trees[0].value + 0.5:
+            self.trees[0].ins(value)
+            return self
 
         # or is it the biggest number
-        if value > 
+        if value >= self.trees[-1].value + 0.5:
+            self.trees.append(Tree(self.root_val(value)).ins(value))
+            return self
+
+        if self.trees[-1].value - 0.5 <= value < self.trees[-1].value + 0.5:
+            self.trees[-1].ins(value)
+            return self
 
 
-        for i, t in enumerate(self.trees[1:-1], start=1, ):
+
+        for i, t in enumerate(self.trees[1:-1], start=1):
             if t.value - 0.5 <= value < t.value + 0.5:
                 t.ins(value)
-                return
+                return self
 
-            if
+            if self.trees[i-1].value + 0.5 <= value < self.trees[i+1].value-0.5:
+                self.trees = self.trees[:i] + [Tree(self.root_val(value)).ins(value)] + self.trees[i:]
+                return self
 
+    def insert_multiple(self, *values) -> Forest:
+        for v in values:
+            self.ins(v)
+        return self
 
+    def print(self) -> None:
+        for t in self.trees:
+            t.recursive_print()
 
-
+    def print_debug(self) -> None:
+        for t in self.trees:
+            print(t)
 
 
 if __name__ == "__main__":
-    t = Tree(3)
-    t.ins(1).ins(2).ins(3).ins(4).ins(5).ins(0.5)
-    t.recursive_print()
-    x = Forest()
-    print(x)
-    print(x.trees)
+    f = Forest()
+    f.insert_multiple(1.5, 1.3, 1.6, 3.5, 3.7, 4.5, 4.0, 4.99, 7.5, 7.3, 7.8, 7.7, 7.6, 7.9, 9.5, 9.3)
+    # t = Tree(3)
+    # t.ins(1).ins(2).ins(3).ins(4).ins(5).ins(0.5)
+    # t.recursive_print()
+    # f.print_debug()
+    f.print()
