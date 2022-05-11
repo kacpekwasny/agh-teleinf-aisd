@@ -28,7 +28,6 @@ class Tree:
         # the value == self.value... So just leave it?
         return self
 
-
     def recursive_print(self, level=0, indentation=0) -> None:
         sval = str("%.2f" % self.value).strip("0")
         if sval[-1] == ".":
@@ -50,6 +49,23 @@ class Tree:
         
         if not (self.less or self.more):
             print("")
+
+    def search(self, value: float) -> bool:
+        """
+        returns: bool - Found True, not found False
+        """
+        if value == self.value:
+            return True
+
+        if value < self.value:
+            if not self.less:
+                return False
+            return self.less.search(value)
+        
+        # value > self.value
+        if not self.more:
+            return False
+        return self.more.search(value)
 
 @dataclass
 class Forest:
@@ -106,6 +122,39 @@ class Forest:
         for t in self.trees:
             print(t)
 
+    def minimum(self, root_val: float) -> float:
+        """
+            raises:
+                IndexError when there is no root with such value
+        """
+        mn = root_val
+        t = [t for t in self.trees if t.value == root_val][0]
+        while t.less:
+            t = t.less
+            mn = t.value
+        return mn
+
+    def maximum(self, root_val: float) -> float:
+        """
+            raises:
+                IndexError when there is no root with such value
+        """
+        mn = root_val
+        t = [t for t in self.trees if t.value == root_val][0]
+        while t.more:
+            t = t.more
+            mn = t.value
+        return mn
+
+    def search(self, value: float) -> float:
+        """
+        returns: bool - Found True, not found False
+        """
+        for t in self.trees:
+            if t.value - 0.5 <= value < t.value+0.5:
+                return t.search(value)
+
+        return False
 
 if __name__ == "__main__":
     f = Forest()
@@ -115,3 +164,5 @@ if __name__ == "__main__":
     # t.recursive_print()
     # f.print_debug()
     f.print()
+    print(f.minimum(7.5))
+    print(f.maximum(7.5))
