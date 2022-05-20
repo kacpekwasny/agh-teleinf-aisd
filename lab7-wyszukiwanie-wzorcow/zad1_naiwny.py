@@ -1,4 +1,5 @@
 from sys import argv
+from time import perf_counter
 
 
 def get_content_2D(file_path) -> list[str]:
@@ -19,15 +20,11 @@ def find_occurrences(content: list[str]) -> tuple[int, int]:
 
 if __name__ == "__main__":
     lines = get_content_2D(argv[1])
-    print(len(lines))
     i = 0
+    start = perf_counter()
     for y, x in find_occurrences(lines):
         i += 1
-        # print(f"{x=} {y=}", flush=False)
-        if False: print(f"""{lines[y  ][x:x+3]}
-{lines[y+1][x:x+3]}
-{lines[y+2][x:x+3]}
-""", flush=False)
+    print(f"{perf_counter() - start = }")
     print(i)
 
 
