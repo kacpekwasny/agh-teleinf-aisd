@@ -75,9 +75,13 @@ def find_karp(lines: list[list[int]], pattern: list[int], d: int, q: int) -> lis
     cmvh = [] # coords matched vertical and horizontaly
     for coords in cmh:
         to_check = []    
+        match = False
         for y in range(len(pattern)):
-            to_check.append( lines[coords.y + y][coords.x] )
-        if pattern == to_check:
+            match = False
+            if lines[coords.y + y][coords.x] != pattern[y]:
+                break
+            match = True
+        if match:
             cmvh.append(coords)
     return cmvh
 
