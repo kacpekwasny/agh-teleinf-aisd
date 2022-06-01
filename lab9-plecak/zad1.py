@@ -150,50 +150,24 @@ def solve(backpack: Backpack, all_items: list[Thing]) -> Backpack:
     """
     recursively find the semi-best way to store items of the highest value.
     """
+    for item in [i for i in all_items if i.x == i.y == None]:
 
-    #
 
-
-def multiple_sort(things: list[Thing], *keys_reverse: tuple[function, bool]) -> list[Thing]:
+def build_bottom(b: Backpack, items: Thing):
     """
-    sort things by one function, then all things that have the same parameter sort by second function and so on
-    
-    params:
-        things: list of things to be sorted
-        keys_reverse: tuples where [0] is a function that works as a key, and [1] is bool that says whether it should be a reversed sorted
+    find the best item to be placed at the bottom of the backpack
+    if there is no ideal item, return None
+    An item is considered ideal when can be placed flush with the item on left and thus making a level plane on the floor of backpack 
     """
-    # when there are no more functions to sort by return the list of things
-    if len(keys_reverse)==0 or len(things)==1:
-        return things
-    print("things =\t", things)
-    key, reverse = keys_reverse[0]
-    keys_reverse = keys_reverse[1:]
-    final_sorted = []
-    things_sorted = sorted(things, key=key, reverse=reverse)
-    print("things_sorted =\t", things_sorted)
-    first_different_index = 0
-    last_val = key(things_sorted[first_different_index])
-    for i, thing in enumerate(things_sorted[1:], start=1):
-        new_val = key(thing)
-        if new_val != last_val:
-            # section of items with the same value of key
-            section = things_sorted[first_different_index:i]
-            final_sorted += multiple_sort(section, *keys_reverse)
-            first_different_index = i
-            last_val = new_val
-            print("in loop =\t", things_sorted)
+    pass
 
-    # the trailing items with the same value of key
-    section = things[first_different_index:]
-    final_sorted += multiple_sort(section, *keys_reverse)
-    return final_sorted
-
-ret = multiple_sort([[1, 10], [1, 2], [3, 10], [2, -1], [2, 1], [1, 10], [3, 9]],
-                    (lambda x: x[0], False),
-                    (lambda x: x[1], False)
-                    )
-print(ret)
-for r in ret: print(id(r))
-
+def build_left(b: Backpack, items: Thing):
+    """
+    find the best item to be placed at the left of the backpack
+    if there is no ideal item, return None
+    An item is considered ideal when can be placed flush with the item on underneath and thus moving the left wall to right,
+    not necesiraly the whole wall
+    """
+    pass
 
 
