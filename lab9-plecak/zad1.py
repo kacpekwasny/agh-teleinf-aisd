@@ -151,6 +151,7 @@ def solve(backpack: Backpack, all_items: list[Thing]) -> Backpack:
     recursively find the semi-best way to store items of the highest value.
     """
     for item in [i for i in all_items if i.x == i.y == None]:
+        pass
 
 
 def build_bottom(b: Backpack, items: Thing):
