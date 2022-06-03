@@ -1,3 +1,4 @@
 *.zip
 *.rar
 __pycache__
+trash.py
