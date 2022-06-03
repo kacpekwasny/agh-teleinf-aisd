@@ -211,21 +211,27 @@ class Backpack:
             print("#")
         print("#"*(2*self.width+3))
 
-    def draw(self):
-        
+    def prep_draw(self):
         SCALE = 1080//(self.height + 10)
+        self.SCALE = SCALE
         WIDTH = self.width * SCALE
         HEIGHT = self.height * SCALE
         pygame.init()
         DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
+        self.DISPLAYSURF = DISPLAYSURF
+        self.last = 0
 
-        for item in self.real_items:
+    def draw(self, last=False):
+        SCALE = self.SCALE
+        DISPLAYSURF = self.DISPLAYSURF
+        for item in self.real_items[self.last:]:
             itemW = item.w * SCALE
             itemH = item.h * SCALE
             pygame.draw.rect(DISPLAYSURF, randcol(), pygame.Rect(item.x * SCALE,
                                                                  item.y * SCALE,
                                                                  itemW,
                                                                  itemH))
+        self.last += 1
 
         for sp in self.start_places:
             pygame.draw.rect(DISPLAYSURF, (255, 0, 0), pygame.Rect(sp.x * SCALE,
@@ -233,10 +239,14 @@ class Backpack:
                                                                  SCALE//4,
                                                                  SCALE//4))
 
-        while True: # main game loop
+        while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    return
+                    pygame.quit()
+                    exit()
+                if event.type == KEYDOWN and event.key == K_SPACE or pygame.key.get_pressed()[K_SPACE]:
+                    if not last:
+                        return
             pygame.display.update()
 
     def get_value(self) -> int:
@@ -247,24 +257,27 @@ class Backpack:
 def items_queue(items: list[Item]) -> list[Item]:
     """
     list of things, that are sorted from lowest to highest density.
-    I am not doing reverse, because I want to use .pop(), and .pop(0) takes longer
     """
     return sorted(items, key=lambda thing: thing.dens, reverse=True)
 
 
-def solve(backpack: Backpack, items: list[Item]) -> Backpack:
+def solve(backpack: Backpack, items: list[Item], sort=None, draw=False) -> Backpack:
     """
     naive algorithm
     find the semi-best way to store items of the highest value.
     """
-
+    if draw:
+        backpack.prep_draw()
     placed_item = True
     while placed_item:
         # when the next iteration of loop starts, but the internal part of loop haven't managed to place a new item
         # the `placed_item` will still be False, and thus the loop ends - the backpack is full.
         placed_item = False
 
-        items = items_queue(items)
+        if sort:
+            items = sorted(items, key=sort)
+        else:
+            items = items_queue(items)
         for item in items:
             # find starting place
             for p in backpack.start_places:
@@ -288,9 +301,18 @@ def solve(backpack: Backpack, items: list[Item]) -> Backpack:
                             if p.x + item.w < backpack.width and p.y + item.h < backpack.height:
                                 backpack.add_start_place(p.x + item.w, p.y + item.h)
 
+                            i = 0
+                            while i < len(backpack.start_places):
+                                sp = backpack.start_places[i]
+                                if not backpack.space[sp.y][sp.x] is None:
+                                    backpack.start_places.pop(i)
+                                    continue
+                                i += 1
+
                             backpack.start_places.sort(key=lambda sp: sp.x + sp.y )
 
-                            backpack.draw()
+                            if draw:
+                                backpack.draw()
                             break
                     item.rotated = not item.rotated
             
@@ -299,6 +321,29 @@ def solve(backpack: Backpack, items: list[Item]) -> Backpack:
 
             if placed_item:
                 break
+
+
+def solve2(backpack: Backpack, items: list[Item]) -> Backpack:
+    def avg(x):
+        ls = [k.value for k in x]
+        s = sum(ls)
+        ln = len(ls)
+        print(s, ln, s/ln)
+    avg(items)
+    items2 = items[:]
+    solve(backpack, items, draw=False)
+    print(backpack.get_value())
+    last_density = sorted(backpack.real_items, key=lambda x: 1/x.dens)[-1].dens * 0.95  # I will try now to start with items of this density
+    sort = lambda item: item.dens
+    items = sorted(filter(lambda item: item.dens >= last_density, items2), key=sort)
+    backpack = Backpack(backpack.width, backpack.height)
+    for i in items:
+        i.x = i.y = None
+        i.__post_init__()
+    avg(items)
+    solve(backpack, items, sort=sort, draw=False)
+    return backpack
+
 
 
 if __name__ == "__main__":
@@ -310,27 +355,7 @@ if __name__ == "__main__":
 
     b = Backpack(SIZE, SIZE)
     
-    solve(b, load_items(FILE_PATH))
-    b.draw()
+    b = solve2(b, load_items(FILE_PATH))
     print(b.get_value())
+    b.draw(last=True)
  
-
-
-def not_placed_items(): pass
-
-def build_bottom(b: Backpack, items: Item):
-    """
-    find the best item to be placed at the bottom of the backpack
-    if there is no ideal item, return None
-    An item is considered ideal when can be placed flush with the item on left and thus making a level plane on the floor of backpack 
-    """
-    pass
-
-def build_left(b: Backpack, items: Item):
-    """
-    find the best item to be placed at the left of the backpack
-    if there is no ideal item, return None
-    An item is considered ideal when can be placed flush with the item on underneath and thus moving the left wall to right,
-    not necesiraly the whole wall
-    """
-    pass
